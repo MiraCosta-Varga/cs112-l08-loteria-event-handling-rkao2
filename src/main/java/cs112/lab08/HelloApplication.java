@@ -66,7 +66,7 @@ public class HelloApplication extends Application /* implements EventHandler<Act
         //SETUP COMPONENTS
         Label titleLabel = new Label("Welcome to EChALE STEM Loteria!");
         ImageView cardImageView = new ImageView( cardLogo.getImage());
-        Label messageLabel = new Label("Click the button to randomly draw a card. The progress bar will indicate how far we're into the game.");
+        Label messageLabel = new Label("Click the button to randomly draw a card.");
         Button drawCardButton = new Button("Draw Random Card");
         //gameProgressBar = new ProgressBar();
 

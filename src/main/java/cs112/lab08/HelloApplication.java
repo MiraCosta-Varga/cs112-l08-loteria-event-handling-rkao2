@@ -3,12 +3,16 @@ package cs112.lab08;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ImageView;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+//import javafx.scene.image.logo;
 
 import java.util.Random;
 
@@ -25,8 +29,10 @@ public class HelloApplication extends Application implements EventHandler<Action
             new LoteriaCard("La ingeniería", "9.png", 9),
     };
 
+    ImageView cardImageView;
+    Label messageLabel;
+
     //CLASS-LEVEL VARIABLES
-    //private Label messageLabel;
     //private ImageView cardImageView;
     //private Button drawCardButton;
     //private Label titleLabel;
@@ -35,18 +41,28 @@ public class HelloApplication extends Application implements EventHandler<Action
 
     @Override
     public void start(Stage stage) throws IOException {
+        LoteriaCard cardLogo = new LoteriaCard();
+
         //SETUP COMPONENTS
         Label titleLabel = new Label("Welcome to EChALE STEM Loteria!");
-        ImageView cardImageView = new ImageView();
-        Label messageLabel = new Label("Click the button to randomly draw a card. The progress bar will indicate how far we're into the game.");
+        cardImageView = new ImageView( cardLogo.getImage());
+        messageLabel = new Label("Click the button to randomly draw a card. The progress bar will indicate how far we're into the game.");
         Button drawCardButton = new Button("Draw Random Card");
         //gameProgressBar = new ProgressBar();
 
+
+        //CUSTOMIZE COMPONENT
+        cardImageView.setFitWidth(300);
+        cardImageView.setPreserveRatio(true);
+        titleLabel.setFont(new Font(20.0));
+        drawCardButton.setOnAction(this);
 
         //ADD COMPONENTS
         VBox vbox = new VBox();
         vbox.getChildren().addAll(titleLabel, cardImageView,
                 messageLabel, drawCardButton);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(10.0);
 
         //SETUP SCENE AND SHOW
         Scene scene = new Scene(vbox, 350, 500);
@@ -54,30 +70,20 @@ public class HelloApplication extends Application implements EventHandler<Action
         stage.setTitle("EChALE STEM Loteria");
         stage.show();
 
-
-
-        //SET COMPONENT PROPERTIES
-        /*
-        LoteriaCard tempCard = new LoteriaCard();
-        cardImageView.setImage(tempCard.getImage());
-        cardImageView.setFitWidth(300);
-        cardImageView.setPreserveRatio(true);
-
-        messageLabel.setWrapText(true);
-
-        //SETUP LAYOUT
-
-        */
-
-
-
-
-
     }
 
     @Override
     public void handle(ActionEvent actionEvent){
+        //handles button class
+        System.out.println("Button was clicked");
+        // get random card
+        int randomInt = (int) (Math.random() * LOTERIA_CARDS.length); //gen 0-3
+        LoteriaCard randomCard = LOTERIA_CARDS[randomInt];
+        // image changes to card name
+        cardImageView.setImage( randomCard.getImage() );
 
+        //message label
+        messageLabel.setText( randomCard.getCardName() );
     }
     public static void main(String[] args) {
         launch();

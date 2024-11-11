@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 //import javafx.scene.image.logo;
 
@@ -18,7 +19,7 @@ import java.util.Random;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application implements EventHandler<ActionEvent> {
+public class HelloApplication extends Application /* implements EventHandler<ActionEvent>*/ {
     //CONSTANTS
 
     //array of LoteriaCards to use for game:
@@ -29,15 +30,34 @@ public class HelloApplication extends Application implements EventHandler<Action
             new LoteriaCard("La ingeniería", "9.png", 9),
     };
 
-    ImageView cardImageView;
-    Label messageLabel;
+    private ImageView cardImageView;
+    private Label messageLabel;
+    private int count = 0;
 
-    //CLASS-LEVEL VARIABLES
-    //private ImageView cardImageView;
-    //private Button drawCardButton;
-    //private Label titleLabel;
-    //private ProgressBar
+    private static LoteriaCard[] shuffleCards = shuffleLoteriaDeck();
 
+    private static LoteriaCard[] shuffleLoteriaDeck(){
+        LoteriaCard[] cards = new LoteriaCard[LOTERIA_CARDS.length];
+
+        //deep copying EACH card object
+        for(int i=0; i<cards.length; i++){
+            cards[i] = new LoteriaCard(LOTERIA_CARDS[i]);
+        }
+
+        //shuffle
+        for(int i = 0; i<10 * cards.length; i++){
+            int randomInt1 = (int) (Math.random() * LOTERIA_CARDS.length);
+            int randomInt2 = (int) (Math.random() * LOTERIA_CARDS.length);
+
+            //code to swap two objects in array
+            LoteriaCard temp = LOTERIA_CARDS[randomInt1];
+            cards[randomInt1] = cards[randomInt2];
+            cards[randomInt2] = temp;
+
+        }
+
+        return cards;
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -45,17 +65,45 @@ public class HelloApplication extends Application implements EventHandler<Action
 
         //SETUP COMPONENTS
         Label titleLabel = new Label("Welcome to EChALE STEM Loteria!");
-        cardImageView = new ImageView( cardLogo.getImage());
-        messageLabel = new Label("Click the button to randomly draw a card. The progress bar will indicate how far we're into the game.");
+        ImageView cardImageView = new ImageView( cardLogo.getImage());
+        Label messageLabel = new Label("Click the button to randomly draw a card. The progress bar will indicate how far we're into the game.");
         Button drawCardButton = new Button("Draw Random Card");
         //gameProgressBar = new ProgressBar();
 
-
         //CUSTOMIZE COMPONENT
+        messageLabel.setWrapText(true);
+        messageLabel.setAlignment(Pos.CENTER);
+        messageLabel.setTextAlignment(TextAlignment.CENTER);
         cardImageView.setFitWidth(300);
         cardImageView.setPreserveRatio(true);
         titleLabel.setFont(new Font(20.0));
-        drawCardButton.setOnAction(this);
+        drawCardButton.setOnAction(
+                new EventHandler<ActionEvent>(){
+                    @Override
+                    public void handle(ActionEvent actionEvent){
+
+                        if(count == shuffleCards.length){
+                            //end the game
+                            messageLabel.setText("GAME OVER! No more cards! Exit and run program to reset ^_^ ");
+                            cardImageView.setImage( cardLogo.getImage());
+                            drawCardButton.setDisable(true);
+                        } else{
+                            // get random card
+                            LoteriaCard randomCard = shuffleCards[count];
+
+                            // image changes to card name
+                            cardImageView.setImage( randomCard.getImage() );
+
+                            //message label
+                            messageLabel.setText( randomCard.getCardName() );
+                            count++;
+                        }
+
+                    }
+                }
+        );
+
+
 
         //ADD COMPONENTS
         VBox vbox = new VBox();
@@ -72,19 +120,7 @@ public class HelloApplication extends Application implements EventHandler<Action
 
     }
 
-    @Override
-    public void handle(ActionEvent actionEvent){
-        //handles button class
-        System.out.println("Button was clicked");
-        // get random card
-        int randomInt = (int) (Math.random() * LOTERIA_CARDS.length); //gen 0-3
-        LoteriaCard randomCard = LOTERIA_CARDS[randomInt];
-        // image changes to card name
-        cardImageView.setImage( randomCard.getImage() );
 
-        //message label
-        messageLabel.setText( randomCard.getCardName() );
-    }
     public static void main(String[] args) {
         launch();
     }
